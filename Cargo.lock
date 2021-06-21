@@ -1923,7 +1923,7 @@ dependencies = [
  "linregress",
  "log",
  "parity-scale-codec",
- "paste 1.0.4",
+ "paste 1.0.5",
  "sp-api",
  "sp-io",
  "sp-runtime",
@@ -2007,7 +2007,7 @@ dependencies = [
  "max-encoded-len",
  "once_cell",
  "parity-scale-codec",
- "paste 1.0.4",
+ "paste 1.0.5",
  "serde",
  "smallvec 1.6.1",
  "sp-arithmetic",
@@ -5087,7 +5087,7 @@ dependencies = [
  "pallet-authorship",
  "pallet-session",
  "parity-scale-codec",
- "paste 1.0.4",
+ "paste 1.0.5",
  "rand_chacha 0.2.2",
  "serde",
  "sp-application-crypto",
@@ -5509,9 +5509,9 @@ dependencies = [
 
 [[package]]
 name = "paste"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5d65c4d95931acda4498f675e332fcbdc9a06705cd07086c510e9b6009cd1c1"
+checksum = "acbf547ad0c65e31259204bd90935776d1c693cec2f4ff7abb7a1bbbd40dfe58"
 
 [[package]]
 name = "paste-impl"
@@ -6385,7 +6385,6 @@ dependencies = [
  "sp-application-crypto",
  "sp-core",
  "sp-keystore",
- "streamunordered",
  "substrate-prometheus-endpoint",
  "thiserror",
  "tracing",
@@ -9203,7 +9202,7 @@ version = "0.9.5"
 dependencies = [
  "enumn",
  "parity-scale-codec",
- "paste 1.0.4",
+ "paste 1.0.5",
  "sp-runtime",
  "sp-std",
 ]
@@ -9738,7 +9737,7 @@ dependencies = [
  "max-encoded-len",
  "parity-scale-codec",
  "parity-util-mem",
- "paste 1.0.4",
+ "paste 1.0.5",
  "rand 0.7.3",
  "serde",
  "sp-application-crypto",
@@ -10050,18 +10049,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09f8ed9974042b8c3672ff3030a69fcc03b74c47c3d1ecb7755e8a3626011e88"
 dependencies = [
  "generic-array 0.14.4",
-]
-
-[[package]]
-name = "streamunordered"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9394ee1338fee8370bee649f8a7170b3a56917903a0956467ad192dcf8699ca"
-dependencies = [
- "futures-core",
- "futures-sink",
- "futures-util",
- "slab",
 ]
 
 [[package]]
@@ -11427,7 +11414,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "log",
- "paste 1.0.4",
+ "paste 1.0.5",
  "psm",
  "region",
  "rustc-demangle",
