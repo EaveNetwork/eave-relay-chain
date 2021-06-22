@@ -12,7 +12,7 @@ edition = "2018"
 readme = "README.md"
 
 [dependencies]
-polkadot-cli = { path = "cli", features = [ "kusama-native", "westend-native", "rococo-native" ]  }
+polkadot-cli = { path = "cli", features = [ "kusama-native", "westend-native", "rococo-native", "aqua-native" ]  }
 color-eyre = { version = "0.5.11", default-features = false }
 parity-util-mem = { version = "*", default-features = false, features = ["jemalloc-global"] }
 
@@ -27,12 +27,14 @@ members = [
 	"core-primitives",
 	"erasure-coding",
 	"primitives",
+	"runtime/aqua",
 	"runtime/common",
 	"runtime/common/slot_range_helper",
 	"runtime/parachains",
 	"runtime/polkadot",
 	"runtime/kusama",
 	"runtime/rococo",
+	"runtime/aqua",
 	"runtime/westend",
 	"runtime/test-runtime",
 	"statement-table",

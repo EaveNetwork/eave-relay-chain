@@ -85,6 +85,7 @@ polkadot-runtime = { path = "../../runtime/polkadot" }
 kusama-runtime = { path = "../../runtime/kusama", optional = true }
 westend-runtime = { path = "../../runtime/westend", optional = true }
 rococo-runtime = { path = "../../runtime/rococo", optional = true }
+aqua-runtime = { path = "../../runtime/aqua", optional = true }
 
 # Polkadot Subsystems
 polkadot-availability-bitfield-distribution = { path = "../network/bitfield-distribution", optional = true }
@@ -146,16 +147,19 @@ light-node = []
 kusama-native = [ "kusama-runtime", "polkadot-client/kusama" ]
 westend-native = [ "westend-runtime", "polkadot-client/westend" ]
 rococo-native = [ "rococo-runtime", "polkadot-client/rococo" ]
+aqua-native = [ "aqua-runtime", "polkadot-client/aqua" ]
 
 runtime-benchmarks = [
 	"polkadot-runtime/runtime-benchmarks",
 	"kusama-runtime/runtime-benchmarks",
 	"westend-runtime/runtime-benchmarks",
-	"rococo-runtime/runtime-benchmarks"
+	"rococo-runtime/runtime-benchmarks",
+	"aqua-runtime/runtime-benchmarks"
 ]
 try-runtime = [
 	"polkadot-runtime/try-runtime",
 	"kusama-runtime/try-runtime",
 	"westend-runtime/try-runtime",
 	"rococo-runtime/try-runtime",
+	"aqua-runtime/try-runtime"
 ]

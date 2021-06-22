@@ -67,6 +67,14 @@ native_executor_instance!(
 	frame_benchmarking::benchmarking::HostFunctions,
 );
 
+#[cfg(feature = "aqua")]
+native_executor_instance!(
+	pub AquaExecutor,
+	aqua_runtime::api::dispatch,
+	aqua_runtime::native_version,
+	frame_benchmarking::benchmarking::HostFunctions,
+);
+
 /// A set of APIs that polkadot-like runtimes must implement.
 pub trait RuntimeApiCollection:
 	sp_transaction_pool::runtime_api::TaggedTransactionQueue<Block>
@@ -200,6 +208,8 @@ macro_rules! with_client {
 			Self::Kusama($client) => { $( $code )* },
 			#[cfg(feature = "rococo")]
 			Self::Rococo($client) => { $( $code )* },
+			#[cfg(feature = "aqua")]
+			Self::Aqua($client) => { $( $code )* },
 		}
 	}
 }
@@ -216,6 +226,8 @@ pub enum Client {
 	Kusama(Arc<FullClient<kusama_runtime::RuntimeApi, KusamaExecutor>>),
 	#[cfg(feature = "rococo")]
 	Rococo(Arc<FullClient<rococo_runtime::RuntimeApi, RococoExecutor>>),
+	#[cfg(feature = "aqua")]
+	Aqua(Arc<FullClient<aqua_runtime::RuntimeApi, AquaExecutor>>),
 }
 
 impl ClientHandle for Client {

@@ -35,10 +35,12 @@ polkadot-runtime = { path = "../../runtime/polkadot" }
 kusama-runtime = { path = "../../runtime/kusama", optional = true }
 westend-runtime = { path = "../../runtime/westend", optional = true }
 rococo-runtime = { path = "../../runtime/rococo", optional = true }
+aqua-runtime = { path = "../../runtime/aqua", optional = true }
 
 polkadot-primitives = { path = "../../primitives" }
 
 [features]
 kusama = [ "kusama-runtime" ]
 rococo = [ "rococo-runtime" ]
+aqua = [ "aqua-runtime" ]
 westend = [ "westend-runtime" ]

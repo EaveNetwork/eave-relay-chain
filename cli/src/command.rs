@@ -68,7 +68,7 @@ impl SubstrateCli for Cli {
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
 		let id = if id == "" {
 			let n = get_exec_name().unwrap_or_default();
-			["polkadot", "kusama", "westend", "rococo"].iter()
+			["polkadot", "kusama", "westend", "rococo", "aqua"].iter()
 				.cloned()
 				.find(|&chain| n.starts_with(chain))
 				.unwrap_or("polkadot")
@@ -97,6 +97,15 @@ impl SubstrateCli for Cli {
 			"rococo-staging" => Box::new(service::chain_spec::rococo_staging_testnet_config()?),
 			name if name.starts_with("rococo-") =>
 				Err(format!("`{}` only supported with `rococo-native` feature enabled.", name))?,
+			"aqua" => Box::new(service::chain_spec::aqua_config()?),
+			#[cfg(feature = "aqua-native")]
+			"aqua-dev" => Box::new(service::chain_spec::aqua_development_config()?),
+			#[cfg(feature = "aqua-native")]
+			"aqua-local" => Box::new(service::chain_spec::aqua_local_testnet_config()?),
+			#[cfg(feature = "aqua-native")]
+			"aqua-staging" => Box::new(service::chain_spec::aqua_staging_testnet_config()?),
+			name if name.starts_with("aqua-") =>
+				Err(format!("`{}` only supported with `aqua-native` feature enabled.", name))?,
 			"westend" => Box::new(service::chain_spec::westend_config()?),
 			#[cfg(feature = "westend-native")]
 			"westend-dev" => Box::new(service::chain_spec::westend_development_config()?),
@@ -122,6 +131,8 @@ impl SubstrateCli for Cli {
 				// we use the chain spec for the specific chain.
 				if self.run.force_rococo || chain_spec.is_rococo() || chain_spec.is_wococo() {
 					Box::new(service::RococoChainSpec::from_json_file(path)?)
+				} else if self.run.force_aqua || chain_spec.is_aqua() {
+					Box::new(service::AquaChainSpec::from_json_file(path)?)
 				} else if self.run.force_kusama || chain_spec.is_kusama() {
 					Box::new(service::KusamaChainSpec::from_json_file(path)?)
 				} else if self.run.force_westend || chain_spec.is_westend() {
@@ -149,7 +160,12 @@ impl SubstrateCli for Cli {
 			return &service::rococo_runtime::VERSION
 		}
 
-		#[cfg(not(all(feature = "rococo-native", feature = "westend-native", feature = "kusama-native")))]
+		#[cfg(feature = "aqua-native")]
+		if spec.is_aqua() {
+			return &service::aqua_runtime::VERSION
+		}
+
+		#[cfg(not(all(feature = "rococo-native", feature = "aqua-native", feature = "westend-native", feature = "kusama-native")))]
 		let _ = spec;
 
 		&service::polkadot_runtime::VERSION
@@ -171,7 +187,7 @@ fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 }
 
 const DEV_ONLY_ERROR_PATTERN: &'static str =
-	"can only use subcommand with --chain [polkadot-dev, kusama-dev, westend-dev, rococo-dev, wococo-dev], got ";
+	"can only use subcommand with --chain [polkadot-dev, kusama-dev, westend-dev, rococo-dev, aqua-dev, wococo-dev], got ";
 
 fn ensure_dev(spec: &Box<dyn service::ChainSpec>) -> std::result::Result<(), String> {
 	if spec.is_dev() {

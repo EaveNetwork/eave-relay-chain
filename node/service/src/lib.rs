@@ -58,6 +58,9 @@ use telemetry::{Telemetry, TelemetryWorker, TelemetryWorkerHandle};
 #[cfg(feature = "rococo-native")]
 pub use polkadot_client::RococoExecutor;
 
+#[cfg(feature = "aqua-native")]
+pub use polkadot_client::AquaExecutor;
+
 #[cfg(feature = "westend-native")]
 pub use polkadot_client::WestendExecutor;
 
@@ -68,7 +71,7 @@ pub use polkadot_client::{
 	PolkadotExecutor, FullBackend, FullClient, AbstractClient, Client, ClientHandle, ExecuteWithClient,
 	RuntimeApiCollection,
 };
-pub use chain_spec::{PolkadotChainSpec, KusamaChainSpec, WestendChainSpec, RococoChainSpec};
+pub use chain_spec::{PolkadotChainSpec, KusamaChainSpec, WestendChainSpec, RococoChainSpec, AquaChainSpec};
 pub use consensus_common::{Proposal, SelectChain, BlockImport, block_validation::Chain};
 pub use polkadot_primitives::v1::{Block, BlockId, CollatorPair, Hash, Id as ParaId};
 pub use sc_client_api::{Backend, ExecutionStrategy, CallExecutor};
@@ -88,6 +91,8 @@ pub use kusama_runtime;
 pub use polkadot_runtime;
 #[cfg(feature = "rococo-native")]
 pub use rococo_runtime;
+#[cfg(feature = "aqua-native")]
+pub use aqua_runtime;
 #[cfg(feature = "westend-native")]
 pub use westend_runtime;
 
@@ -146,6 +151,9 @@ pub trait IdentifyVariant {
 	/// Returns if this is a configuration for the `Rococo` network.
 	fn is_rococo(&self) -> bool;
 
+	/// Returns if this is a configuration for the `Aqua` network.
+	fn is_aqua(&self) -> bool;
+
 	/// Returns if this is a configuration for the `Wococo` test network.
 	fn is_wococo(&self) -> bool;
 
@@ -162,6 +170,9 @@ impl IdentifyVariant for Box<dyn ChainSpec> {
 	}
 	fn is_rococo(&self) -> bool {
 		self.id().starts_with("rococo") || self.id().starts_with("rco")
+	}
+	fn is_aqua(&self) -> bool {
+		self.id().starts_with("aqua") || self.id().starts_with("aqu")
 	}
 	fn is_wococo(&self) -> bool {
 		self.id().starts_with("wococo") || self.id().starts_with("wco")
@@ -672,7 +683,7 @@ pub fn new_full<RuntimeApi, Executor>(
 	let backoff_authoring_blocks = {
 		let mut backoff = sc_consensus_slots::BackoffAuthoringOnFinalizedHeadLagging::default();
 
-		if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
+		if config.chain_spec.is_rococo() || config.chain_spec.is_aqua() || config.chain_spec.is_wococo() {
 			// it's a testnet that's in flux, finality has stalled sometimes due
 			// to operational issues and it's annoying to slow down block
 			// production to 1 block per hour.
@@ -706,7 +717,7 @@ pub fn new_full<RuntimeApi, Executor>(
 	// Substrate nodes.
 	config.network.extra_sets.push(grandpa::grandpa_peers_set_config());
 
-	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
+	if config.chain_spec.is_rococo() || config.chain_spec.is_aqua() || config.chain_spec.is_wococo() {
 		config.network.extra_sets.push(beefy_gadget::beefy_peers_set_config());
 	}
 
@@ -949,8 +960,8 @@ pub fn new_full<RuntimeApi, Executor>(
 		None
 	};
 
-	// We currently only run the BEEFY gadget on the Rococo and Wococo testnets.
-	if !disable_beefy && (chain_spec.is_rococo() || chain_spec.is_wococo()) {
+	// We currently only run the BEEFY gadget on the Rococo  and Aqua and Wococo testnets.
+	if !disable_beefy && (chain_spec.is_rococo() || chain_spec.is_aqua() || chain_spec.is_wococo()) {
 		let beefy_params = beefy_gadget::BeefyParams {
 			client: client.clone(),
 			backend: backend.clone(),
@@ -1233,6 +1244,13 @@ pub fn new_chain_ops(
 		return Ok((Arc::new(Client::Rococo(client)), backend, import_queue, task_manager))
 	}
 
+	#[cfg(feature = "aqua-native")]
+	if config.chain_spec.is_aqua() {
+		let service::PartialComponents { client, backend, import_queue, task_manager, .. }
+			= new_partial::<aqua_runtime::RuntimeApi, AquaExecutor>(config, jaeger_agent, None)?;
+		return Ok((Arc::new(Client::Aqua(client)), backend, import_queue, task_manager))
+	}
+
 	#[cfg(feature = "kusama-native")]
 	if config.chain_spec.is_kusama() {
 		let service::PartialComponents { client, backend, import_queue, task_manager, .. }
@@ -1262,6 +1280,11 @@ pub fn build_light(config: Configuration) -> Result<(
 	#[cfg(feature = "rococo-native")]
 	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
 		return new_light::<rococo_runtime::RuntimeApi, RococoExecutor>(config)
+	}
+
+	#[cfg(feature = "aqua-native")]
+	if config.chain_spec.is_aqua() || config.chain_spec.is_wococo() {
+		return new_light::<aqua_runtime::RuntimeApi, AquaExecutor>(config)
 	}
 
 	#[cfg(feature = "kusama-native")]
@@ -1297,6 +1320,19 @@ pub fn build_full(
 			telemetry_worker_handle,
 			None,
 		).map(|full| full.with_client(Client::Rococo))
+	}
+
+	#[cfg(feature = "aqua-native")]
+	if config.chain_spec.is_aqua() {
+		return new_full::<aqua_runtime::RuntimeApi, AquaExecutor>(
+			config,
+			is_collator,
+			grandpa_pause,
+			disable_beefy,
+			jaeger_agent,
+			telemetry_worker_handle,
+			None,
+		).map(|full| full.with_client(Client::Aqua))
 	}
 
 	#[cfg(feature = "kusama-native")]

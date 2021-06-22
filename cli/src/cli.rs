@@ -95,6 +95,10 @@ pub struct RunCmd {
 	#[structopt(long = "force-rococo")]
 	pub force_rococo: bool,
 
+	/// Force using Aqua native runtime.
+	#[structopt(long = "force-aqua")]
+	pub force_aqua: bool,
+
 	/// Setup a GRANDPA scheduled voting pause.
 	///
 	/// This parameter takes two values, namely a block number and a delay (in
