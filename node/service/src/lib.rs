@@ -1283,7 +1283,7 @@ pub fn build_light(config: Configuration) -> Result<(
 	}
 
 	#[cfg(feature = "aqua-native")]
-	if config.chain_spec.is_aqua() || config.chain_spec.is_wococo() {
+	if config.chain_spec.is_aqua() {
 		return new_light::<aqua_runtime::RuntimeApi, AquaExecutor>(config)
 	}
 

@@ -108,7 +108,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 /// Runtime version (Aqua).
 pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("aqua"),
-	impl_name: create_runtime_str!("parity-aqua-v1.0"),
+	impl_name: create_runtime_str!("eave-aqua-v1.0"),
 	authoring_version: 0,
 	spec_version: 9004,
 	impl_version: 0,
@@ -588,7 +588,7 @@ impl parachains_paras::Config for Runtime {
 }
 
 parameter_types! {
-	pub const RocLocation: MultiLocation = MultiLocation::Null;
+	pub const AquaLocation: MultiLocation = MultiLocation::Null;
 	pub const AquaNetwork: NetworkId = NetworkId::Polkadot;
 	pub const Ancestry: MultiLocation = MultiLocation::Null;
 	pub CheckAccount: AccountId = XcmPallet::check_account();
@@ -604,7 +604,7 @@ pub type LocalAssetTransactor =
 		// Use this currency:
 		Balances,
 		// Use this currency when it is a fungible asset matching the given location or name:
-		IsConcrete<RocLocation>,
+		IsConcrete<AquaLocation>,
 		// We can convert the MultiLocations with our converter above:
 		SovereignAccountOf,
 		// Our chain's account ID type (we can't get away without mentioning it explicitly):
@@ -677,7 +677,7 @@ impl xcm_executor::Config for XcmConfig {
 	type LocationInverter = LocationInverter<Ancestry>;
 	type Barrier = Barrier;
 	type Weigher = FixedWeightBounds<BaseXcmWeight, Call>;
-	type Trader = UsingComponents<WeightToFee, RocLocation, AccountId, Balances, ToAuthor<Runtime>>;
+	type Trader = UsingComponents<WeightToFee, AquaLocation, AccountId, Balances, ToAuthor<Runtime>>;
 	type ResponseHandler = ();
 }
 
